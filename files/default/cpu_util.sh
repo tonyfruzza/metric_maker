@@ -1,39 +1,28 @@
-#!/bin/bash
+#!/usr/bin/env ruby
 
-PREV_TOTAL=0
-PREV_IDLE=0
-# Get the total CPU statistics, discarding the 'cpu ' prefix.
-CPU=(`sed -n 's/^cpu\s//p' /proc/stat`)
-IDLE=${CPU[3]} # Just the idle CPU time.
+prev_total = 0
+prev_idle = 0
 
-# Calculate the total CPU time.
-TOTAL=0
-for VALUE in "${CPU[@]}"; do
-  let "TOTAL=$TOTAL+$VALUE"
-done
-
-# Calculate the CPU usage since we last checked.
-let "DIFF_IDLE=$IDLE-$PREV_IDLE"
-let "DIFF_TOTAL=$TOTAL-$PREV_TOTAL"
-let "DIFF_USAGE=(1000*($DIFF_TOTAL-$DIFF_IDLE)/$DIFF_TOTAL+5)/10"
-
-# Remember the total and idle CPU times for the next check.
-PREV_TOTAL="$TOTAL"
-PREV_IDLE="$IDLE"
+cpu = File.read('/proc/stat').each_line.find{|line| /^cpu\s/ =~ line}.sub('cpu', '').strip.split(' ')
+idle = cpu[3].to_i
+total = 0
+cpu.each{|i| total += i.to_i}
+diff_idle  = idle - prev_idle
+diff_total = total - prev_total
+diff_usage = (1000 * (diff_total - diff_idle)/diff_total+5)/10
+prev_total = total
+prev_idle = idle
 
 sleep 1
 
-CPU=(`sed -n 's/^cpu\s//p' /proc/stat`)
-IDLE=${CPU[3]} # Just the idle CPU time.
+cpu = File.read('/proc/stat').each_line.find{|line| /^cpu\s/ =~ line}.sub('cpu', '').strip.split(' ')
+idle = cpu[3].to_i
+total = 0
+cpu.each{|i| total += i.to_i}
+diff_idle  = idle - prev_idle
+diff_total = total - prev_total
+diff_usage = (1000 * (diff_total - diff_idle)/diff_total+5)/10
+prev_total = total
+prev_idle = idle
 
-# Calculate the total CPU time.
-TOTAL=0
-for VALUE in "${CPU[@]}"; do
-  let "TOTAL=$TOTAL+$VALUE"
-done
-
-# Calculate the CPU usage since we last checked.
-let "DIFF_IDLE=$IDLE-$PREV_IDLE"
-let "DIFF_TOTAL=$TOTAL-$PREV_TOTAL"
-let "DIFF_USAGE=(1000*($DIFF_TOTAL-$DIFF_IDLE)/$DIFF_TOTAL+5)/10"
-echo -n $DIFF_USAGE
+puts diff_usage
