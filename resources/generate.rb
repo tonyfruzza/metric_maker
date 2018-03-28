@@ -3,6 +3,7 @@ property :metric_name, String, name_property: true
 property :namespace, String, required: true
 property :dimensions, Array, default: [], required: false
 property :script, String, required: true
+property :script_cookbook, String, required: false
 property :script_content, String, required: false
 property :unit, %w[
   Seconds
@@ -44,6 +45,7 @@ action :create do
 
   cookbook_file "#{node['cw_metric']['root']}/collectors/#{name}" do
     source script
+    cookbook script_cookbook
     mode 0755
     not_if { defined? script == nil }
   end
