@@ -8,7 +8,7 @@ default_action :create
 action :create do
   metric_maker 'root_disk_util' do
     namespace new_resource.namespace
-    script 'root_disk_util.sh'
+    script 'cw_agent::root_disk_util.sh'
     unit 'Percent'
     dimensions new_resource.dimensions
     publish_with_no_dimension new_resource.publish_with_no_dimension
