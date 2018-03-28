@@ -7,10 +7,10 @@ default_action :create
 
 action :create do
   metric_maker 'root_disk_util' do
-    namespace namespace
+    namespace new_resource.namespace
     script 'root_disk_util.sh'
     unit 'Percent'
-    dimensions dimensions
-    publish_with_no_dimension publish_with_no_dimension
+    dimensions new_resource.dimensions
+    publish_with_no_dimension new_resource.publish_with_no_dimension
   end
 end
