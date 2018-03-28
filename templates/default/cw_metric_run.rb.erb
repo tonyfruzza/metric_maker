@@ -5,6 +5,7 @@ require 'net/http'
 require 'aws-sdk'
 
 ROOT_PATH='<%= node['cw_metric']['root'] %>'
+REGION_OVERRIDE='<%= node['cw_metric']['region_override'] %>'
 
 class MetricMaker
   def initialize
@@ -12,6 +13,7 @@ class MetricMaker
   end
 
   def get_region
+    return REGION_OVERRIDE unless REGION_OVERRIDE == ''
     Net::HTTP.get('169.254.169.254', '/latest/meta-data/placement/availability-zone').sub(/[a-z]$/, '')
   end
 
