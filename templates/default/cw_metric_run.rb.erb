@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'json'
+require 'net/http'
+require 'aws-sdk'
+
+ROOT_PATH='<%= node['cw_metric']['root'] %>'
+
+class MetricMaker
+  def initialize
+    @cwm = Aws::CloudWatch::Client.new(region: get_region)
+  end
+
+  def get_region
+    Net::HTTP.get('169.254.169.254', '/latest/meta-data/placement/availability-zone').sub(/[a-z]$/, '')
+  end
+
+  def make_metrics
+    # iterate over ['metrics'] a hash containing:
+    #  namespace string
+    #  name string
+    #  dimensions array of key/values
+    #  unit string
+    #  publish_with_no_dimension bool
+    #
+
+    Dir["#{ROOT_PATH}/conf/*.json"].each do |config|
+      metric = JSON.parse(File.read(config))
+      unless File.exists? "#{ROOT_PATH}/collectors/#{metric['name']}"
+        puts "No collector for #{metric['name']}"
+        next
+      end
+
+      # Run collector
+      value = `#{ROOT_PATH}/collectors/#{metric['name']}`
+
+      params = {
+        namespace: metric['namespace'],
+        metric_data: [
+          metric_name: metric['name'],
+          timestamp: Time.now,
+          value: value.strip.to_f,
+          unit: metric['unit']
+        ]
+      }
+
+      if metric['dimensions'].count > 0
+        if metric['publish_with_no_dimension']
+          params[:metric_data] << params[:metric_data].first.dup
+        end
+        params[:metric_data].last[:dimensions] = metric['dimensions'].map{|element| {name: element.first.first, value: element.first.last} }
+      end
+
+      puts JSON.pretty_generate(params)
+      @cwm.put_metric_data(params)
+    end
+  end
+
+end
+
+mm = MetricMaker.new
+mm.make_metrics

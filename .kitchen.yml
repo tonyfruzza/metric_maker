@@ -1,0 +1,38 @@
+---
+driver:
+  name: ec2
+  aws_ssh_key_id: tony-sturdy-lab
+  region: us-west-2
+  availability_zone: us-west-2a
+  require_chef_omnibus: true
+  security_group_ids:
+    - sg-f7674d91
+  subnet_id: subnet-b61928c1
+  associate_public_ip: true
+  instance_type: t2.micro
+  # iam_profile_name: messages-int-ec2-role-iamInstanceProfile-X5K7DVAMPOC6
+  user_data: "yum -y install openssh-clients"
+  tags:
+    Owner: <%= ENV['USER'] %>
+
+provisioner:
+  name: chef_solo
+  require_chef_omnibus: 12.19.36-1
+
+transport:
+  name: sftp
+
+platforms:
+  - name: amazon
+    driver:
+      image_id: ami-d874e0a0
+    transport:
+      username: ec2-user
+
+suites:
+  - name: metrics_maker
+    run_list:
+      - recipe[cw_metric]
+      - recipe[cw_metric::examples]
+    attributes: {
+    }
