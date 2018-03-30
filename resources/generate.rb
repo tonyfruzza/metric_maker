@@ -79,9 +79,8 @@ action :install do
 
   cron 'cw_metric_run_cron' do
     minute '*/1'
-    hour '*'
-    weekday '*'
     command "#{node['cw_metric']['root']}/bin/cw_metric_run.rb"
+    environment ({PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'})
   end
 
   gem_package 'aws-sdk' do
