@@ -4,8 +4,8 @@ require 'json'
 require 'net/http'
 require 'aws-sdk'
 
-ROOT_PATH='<%= node['cw_metric']['root'] %>'
-REGION_OVERRIDE='<%= node['cw_metric']['region_override'] %>'
+ROOT_PATH='<%= node['metric_maker']['root'] %>'
+REGION_OVERRIDE='<%= node['metric_maker']['region_override'] %>'
 
 class MetricMaker
   def initialize

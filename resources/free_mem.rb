@@ -9,7 +9,7 @@ action :create do
   metric_maker 'free_mem' do
     namespace new_resource.namespace
     script 'free_mem.sh'
-    script_cookbook 'cw_metric'
+    script_cookbook 'metric_maker'
     unit 'Kilobytes'
     dimensions new_resource.dimensions
     publish_with_no_dimension new_resource.publish_with_no_dimension

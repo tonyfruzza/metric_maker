@@ -37,13 +37,13 @@ property :publish_with_no_dimension, [true, false], default: false
 default_action :create
 
 action :create do
-  file "#{node['cw_metric']['root']}/collectors/#{name}" do
+  file "#{node['metric_maker']['root']}/collectors/#{name}" do
     content script_content
     mode 0755
     not_if { defined? script_content == nil }
   end
 
-  cookbook_file "#{node['cw_metric']['root']}/collectors/#{name}" do
+  cookbook_file "#{node['metric_maker']['root']}/collectors/#{name}" do
     source script
     cookbook script_cookbook
     mode 0755
@@ -51,7 +51,7 @@ action :create do
   end
 
   # config for this metric:
-  file "#{node['cw_metric']['root']}/conf/#{name}.json" do
+  file "#{node['metric_maker']['root']}/conf/#{name}.json" do
     content JSON.pretty_generate({
       name: metric_name,
       namespace: namespace,
@@ -66,20 +66,20 @@ end
 action :install do
   # Create directories for holding related files
   %w[run collectors bin conf].each do |dir|
-    directory "#{node['cw_metric']['root']}/#{dir}" do
+    directory "#{node['metric_maker']['root']}/#{dir}" do
       mode 0755
       recursive true
     end
   end
 
-  template "#{node['cw_metric']['root']}/bin/cw_metric_run.rb" do
-    source 'cw_metric_run.rb.erb'
+  template "#{node['metric_maker']['root']}/bin/metric_maker_run.rb" do
+    source 'metric_maker_run.rb.erb'
     mode 0755
   end
 
-  cron 'cw_metric_run_cron' do
+  cron 'metric_maker_run_cron' do
     minute '*/1'
-    command "#{node['cw_metric']['root']}/bin/cw_metric_run.rb"
+    command "#{node['metric_maker']['root']}/bin/metric_maker_run.rb"
     environment ({PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'})
   end
 

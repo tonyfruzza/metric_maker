@@ -1,4 +1,4 @@
-# cw_metric-cookbook
+# metric_maker-cookbook
 
 AWS CloudWatch metric resource wrapper
 
@@ -16,10 +16,10 @@ Tested AWS Linux
     <th>Default</th>
   </tr>
   <tr>
-    <td><tt>['cw_metric']['root']</tt></td>
+    <td><tt>['metric_maker']['root']</tt></td>
     <td>String</td>
     <td>Path to base directory for metric maker to be installed</td>
-    <td><tt>/opt/cw_metric/</tt></td>
+    <td><tt>/opt/metric_maker/</tt></td>
   </tr>
 </table>
 

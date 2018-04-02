@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: cw_metric
+# Cookbook Name:: metric_maker
 # Recipe:: default
 #
 # Copyright (C) 2018 YOUR_NAME

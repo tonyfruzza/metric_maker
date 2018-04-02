@@ -32,7 +32,7 @@ platforms:
 suites:
   - name: metrics_maker
     run_list:
-      - recipe[cw_metric]
-      - recipe[cw_metric::examples]
+      - recipe[metric_maker]
+      - recipe[metric_maker::examples]
     attributes: {
     }
