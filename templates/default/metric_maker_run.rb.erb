@@ -29,38 +29,38 @@ class MetricMaker
     threads = []
 
     Dir["#{ROOT_PATH}/conf/*.json"].each do |config|
-      metric = JSON.parse(File.read(config))
-      unless File.exists? "#{ROOT_PATH}/collectors/#{metric['name']}"
-        puts "No collector for #{metric['name']}"
-        next
-      end
-
-      # Run collector
-      value = `#{ROOT_PATH}/collectors/#{metric['name']}`
-
-      params = {
-        namespace: metric['namespace'],
-        metric_data: [
-          metric_name: metric['name'],
-          timestamp: Time.now,
-          value: value.strip.to_f,
-          unit: metric['unit']
-        ]
-      }
-
-      if metric['dimensions'].count > 0
-        if metric['publish_with_no_dimension']
-          params[:metric_data] << params[:metric_data].first.dup
-        end
-        params[:metric_data].last[:dimensions] = metric['dimensions'].map{|element| {name: element.first.first, value: element.first.last} }
-      end
-
-      threads << Thread.new{put_metric_data_thread(params)}
+      threads << Thread.new{handle_metric_thread(config)}
       threads.each{|t| t.join}
     end
   end
 
-  def put_metric_data_thread(params)
+  def handle_metric_thread(config)
+    metric = JSON.parse(File.read(config))
+    unless File.exists? "#{ROOT_PATH}/collectors/#{metric['name']}"
+      puts "No collector for #{metric['name']}"
+      next
+    end
+
+    # Run collector
+    value = `#{ROOT_PATH}/collectors/#{metric['name']}`
+
+    params = {
+      namespace: metric['namespace'],
+      metric_data: [
+        metric_name: metric['name'],
+        timestamp: Time.now,
+        value: value.strip.to_f,
+        unit: metric['unit']
+      ]
+    }
+
+    if metric['dimensions'].count > 0
+      if metric['publish_with_no_dimension']
+        params[:metric_data] << params[:metric_data].first.dup
+      end
+      params[:metric_data].last[:dimensions] = metric['dimensions'].map{|element| {name: element.first.first, value: element.first.last} }
+    end
+
     puts JSON.pretty_generate(params)
     @cwm.put_metric_data(params)
   end

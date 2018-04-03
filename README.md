@@ -3,11 +3,13 @@
 AWS CloudWatch metric publisher which runs from cron, you provide a script to gather the metric (collectors). Pair the collector up with a `metric_maker` resource call after installing.
 
 ## Requirements
+
 * ruby
 
 ## Supported Platforms
 
 Tested on:
+
 * Amazon Linux 2018
 * Ubuntu 16
 
