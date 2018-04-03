@@ -38,7 +38,7 @@ class MetricMaker
     metric = JSON.parse(File.read(config))
     unless File.exists? "#{ROOT_PATH}/collectors/#{metric['name']}"
       puts "No collector for #{metric['name']}"
-      next
+      return nil
     end
 
     # Run collector
