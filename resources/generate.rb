@@ -78,7 +78,7 @@ action :install do
   end
 
   cron 'metric_maker_run_cron' do
-    minute '*/1'
+    minute "*/#{node['metric_maker']['interval']}"
     command "#{node['metric_maker']['root']}/bin/metric_maker_run.rb"
     environment ({PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'})
   end
