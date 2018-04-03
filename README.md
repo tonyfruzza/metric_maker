@@ -32,7 +32,7 @@ cookbook 'metric_maker', git: 'git@bitbucket.org:corpinfo/metric-maker.git'
 
 And `metadata` use:
 ```
-depends 'metric_maker', '~> 0.3.0'
+depends 'metric_maker', '~> 0.3.2'
 ```
 
 ## Built in metric resources
