@@ -12,7 +12,7 @@ action :create do
     script_template 'disk_util.sh.erb'
     script_cookbook 'metric_maker'
     unit 'Percent'
-    script_template_variables { partition: new_resource.partition }
+    script_template_variables ( partition: new_resource.partition )
     dimensions new_resource.dimensions
     publish_with_no_dimension new_resource.publish_with_no_dimension
   end
