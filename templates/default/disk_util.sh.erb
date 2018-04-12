@@ -1,0 +1,2 @@
+#!/bin/sh
+df <%= @partition %>|tr -s [:space:]|grep ^/|cut -f 5 -d ' '|tr -d %
