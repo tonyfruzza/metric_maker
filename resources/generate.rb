@@ -5,7 +5,7 @@ property :dimensions, Array, default: [], required: false
 property :script, String, required: true
 property :script_cookbook, String, required: false
 property :script_content, String, required: false
-property :script_template, String, requried: false
+property :script_template, String, required: false
 property :script_template_variables, Hash, default: {}
 property :unit, %w[
   Seconds
@@ -52,7 +52,7 @@ action :create do
     not_if { defined? script == nil }
   end
 
-  template "#{node['metric_maker']['root']}/collectors/#{name}" do do
+  template "#{node['metric_maker']['root']}/collectors/#{name}" do
     source script_template
     cookbook script_cookbook
     variables script_template_variables
