@@ -11,8 +11,8 @@ action :create do
     namespace new_resource.namespace
     script_template 'disk_util.sh.erb'
     script_cookbook 'metric_maker'
-    unit 'Percent'
     script_template_variables ({ partition: new_resource.partition })
+    unit 'Percent'
     dimensions new_resource.dimensions
     publish_with_no_dimension new_resource.publish_with_no_dimension
   end

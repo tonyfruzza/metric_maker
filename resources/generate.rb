@@ -2,10 +2,10 @@ resource_name :metric_maker
 property :metric_name, String, name_property: true
 property :namespace, String, required: true
 property :dimensions, Array, default: [], required: false
-property :script, String, required: true
-property :script_cookbook, String, required: false
-property :script_content, String, required: false
-property :script_template, String, required: false
+property :script, String, required: false, default: ''
+property :script_cookbook, String, required: false, default: ''
+property :script_content, String, required: false, default: ''
+property :script_template, String, required: false, default: ''
 property :script_template_variables, Hash, default: {}
 property :unit, %w[
   Seconds
@@ -42,14 +42,14 @@ action :create do
   file "#{node['metric_maker']['root']}/collectors/#{name}" do
     content script_content
     mode 0755
-    not_if { defined? script_content == nil }
+    not_if { script_content.empty? }
   end
 
   cookbook_file "#{node['metric_maker']['root']}/collectors/#{name}" do
     source script
     cookbook script_cookbook
     mode 0755
-    not_if { defined? script == nil }
+    not_if { script_content.empty? }
   end
 
   template "#{node['metric_maker']['root']}/collectors/#{name}" do
@@ -57,7 +57,7 @@ action :create do
     cookbook script_cookbook
     variables script_template_variables
     mode 0755
-    not_if { defined? script_template == nil }
+    not_if { script_content.empty? }
   end
 
   # config for this metric:
