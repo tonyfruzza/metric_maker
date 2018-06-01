@@ -1,14 +1,14 @@
 resource_name :metric_maker_disk
 property :metric_name, String, name_property: true
-property :namespace, String, default: 'MetricMaker'
+property :cw_namespace, String, default: 'MetricMaker'
 property :dimensions, Array, default: [], required: false
 property :publish_with_no_dimension, [true, false], default: false
 property :partition, String, default: '/'
 default_action :create
 
 action :create do
-  metric_maker 'root_disk_util' do
-    namespace new_resource.namespace
+  metric_maker new_resource.name do
+    namespace new_resource.cw_namespace
     script_template 'disk_util.sh.erb'
     script_cookbook 'metric_maker'
     script_template_variables ({ partition: new_resource.partition })
