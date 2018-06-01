@@ -49,7 +49,7 @@ action :create do
     source script
     cookbook script_cookbook
     mode 0755
-    not_if { script_content.empty? }
+    not_if { script.empty? }
   end
 
   template "#{node['metric_maker']['root']}/collectors/#{name}" do
@@ -57,7 +57,7 @@ action :create do
     cookbook script_cookbook
     variables script_template_variables
     mode 0755
-    not_if { script_content.empty? }
+    not_if { script_template.empty? }
   end
 
   # config for this metric:

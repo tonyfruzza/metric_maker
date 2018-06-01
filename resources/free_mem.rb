@@ -1,13 +1,13 @@
 resource_name :metric_maker_free_mem
 property :metric_name, String, name_property: true
-property :namespace, String, default: 'MetricMaker'
+property :cw_namespace, String, default: 'MetricMaker'
 property :dimensions, Array, default: [], required: false
 property :publish_with_no_dimension, [true, false], default: false
 default_action :create
 
 action :create do
   metric_maker 'free_mem' do
-    namespace new_resource.namespace
+    namespace new_resource.cw_namespace
     script 'free_mem.sh'
     script_cookbook 'metric_maker'
     unit 'Kilobytes'
