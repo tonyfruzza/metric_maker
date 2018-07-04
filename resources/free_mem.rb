@@ -6,7 +6,7 @@ property :publish_with_no_dimension, [true, false], default: false
 default_action :create
 
 action :create do
-  metric_maker 'free_mem' do
+  metric_maker new_resource.name do
     namespace new_resource.cw_namespace
     script 'free_mem.sh'
     script_cookbook 'metric_maker'
