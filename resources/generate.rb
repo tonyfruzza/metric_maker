@@ -110,10 +110,10 @@ action :install do
     not_if {node['platform'] == 'windows'}
   end
 
-  # execute 'install_aws_sdk' do
-  #   cwd '/opscode/chef/embedded/bin/'
-  #   command '.\\gem install aws-sdk --no-ri --no-rdoc'
-  #   only_if {node['platform'] == 'windows'}
-  # end
-
+  execute 'install_aws_sdk' do
+    cwd '/opscode/chef/embedded/bin/'
+    command '.\\gem install aws-sdk --no-ri --no-rdoc'
+    only_if {node['platform'] == 'windows'}
+    not_if {Gem::Specification.map{|g| g.name}.include? 'aws-sdk'}
+  end
 end
