@@ -39,41 +39,44 @@ property :publish_with_no_dimension, [true, false], default: false
 default_action :create
 
 action :create do
-  file "#{node['metric_maker']['root']}/collectors/#{name}" do
-    content script_content
+  file "#{node['metric_maker']['root']}/collectors/#{new_resource.metric_name}" do
+    content new_resource.script_content
     mode 0755
-    not_if { script_content.empty? }
+    not_if { new_resource.script_content.empty? }
   end
 
-  cookbook_file "#{node['metric_maker']['root']}/collectors/#{name}" do
-    source script
-    cookbook script_cookbook
+  cookbook_file "#{node['metric_maker']['root']}/collectors/#{new_resource.metric_name}" do
+    source new_resource.script
+    cookbook new_resource.script_cookbook
     mode 0755
-    not_if { script.empty? }
+    not_if { new_resource.script.empty? }
   end
 
-  template "#{node['metric_maker']['root']}/collectors/#{name}" do
-    source script_template
-    cookbook script_cookbook
-    variables script_template_variables
+  template "#{node['metric_maker']['root']}/collectors/#{new_resource.metric_name}" do
+    source new_resource.script_template
+    cookbook new_resource.script_cookbook
+    variables new_resource.script_template_variables
     mode 0755
-    not_if { script_template.empty? }
+    not_if { new_resource.script_template.empty? }
   end
 
   # config for this metric:
-  file "#{node['metric_maker']['root']}/conf/#{name}.json" do
+  file "#{node['metric_maker']['root']}/conf/#{new_resource.metric_name}.json" do
     content JSON.pretty_generate({
-      name: metric_name,
-      namespace: namespace,
-      unit: unit,
-      dimensions: dimensions,
-      publish_with_no_dimension: publish_with_no_dimension
+      name: new_resource.metric_name,
+      namespace: new_resource.namespace,
+      unit: new_resource.unit,
+      dimensions: new_resource.dimensions,
+      publish_with_no_dimension: new_resource.publish_with_no_dimension
     })
   end
-
 end
 
 action :install do
+  package 'ruby' do
+    not_if {node['platform'] == 'windows'}
+  end
+
   # Create directories for holding related files
   %w[run collectors bin conf].each do |dir|
     directory "#{node['metric_maker']['root']}/#{dir}" do
@@ -91,10 +94,26 @@ action :install do
     minute "*/#{node['metric_maker']['interval']}"
     command "#{node['metric_maker']['root']}/bin/metric_maker_run.rb"
     environment ({PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'})
+    not_if {node['platform'] == 'windows'}
+  end
+
+  windows_task 'metric_maker_run_task' do
+    command "C:\\opscode\\chef\\embedded\\bin\\ruby #{path2win(node['metric_maker']['root'])}\\bin\\metric_maker_run.rb"
+    run_level :highest
+    frequency :minute
+    frequency_modifier 1
+    only_if {node['platform'] == 'windows'}
   end
 
   gem_package 'aws-sdk' do
     options '--no-ri --no-rdoc'
+    not_if {node['platform'] == 'windows'}
   end
+
+  # execute 'install_aws_sdk' do
+  #   cwd '/opscode/chef/embedded/bin/'
+  #   command '.\\gem install aws-sdk --no-ri --no-rdoc'
+  #   only_if {node['platform'] == 'windows'}
+  # end
 
 end
