@@ -13,5 +13,16 @@ action :create do
     unit 'Kilobytes'
     dimensions new_resource.dimensions
     publish_with_no_dimension new_resource.publish_with_no_dimension
+    not_if {node['platform'] == 'windows'}
+  end
+
+  metric_maker new_resource.name do
+    namespace new_resource.cw_namespace
+    script 'free_mem.ps1'
+    script_cookbook 'metric_maker'
+    unit 'Megabytes'
+    dimensions new_resource.dimensions
+    publish_with_no_dimension new_resource.publish_with_no_dimension
+    only_if {node['platform'] == 'windows'}
   end
 end
