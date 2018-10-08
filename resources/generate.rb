@@ -97,12 +97,14 @@ action :install do
     not_if {node['platform'] == 'windows'}
   end
 
-  windows_task 'metric_maker_run_task' do
-    command "C:\\opscode\\chef\\embedded\\bin\\ruby #{path2win(node['metric_maker']['root'])}\\bin\\metric_maker_run.rb"
-    run_level :highest
-    frequency :minute
-    frequency_modifier 1
-    only_if {node['platform'] == 'windows'}
+  if respond_to? :windows_task
+    windows_task 'metric_maker_run_task' do
+      command "C:\\opscode\\chef\\embedded\\bin\\ruby #{path2win(node['metric_maker']['root'])}\\bin\\metric_maker_run.rb"
+      run_level :highest
+      frequency :minute
+      frequency_modifier 1
+      only_if {node['platform'] == 'windows'}
+    end
   end
 
   gem_package 'aws-sdk' do
@@ -115,5 +117,14 @@ action :install do
     command '.\\gem install aws-sdk --no-ri --no-rdoc'
     only_if {node['platform'] == 'windows'}
     not_if {Gem::Specification.map{|g| g.name}.include? 'aws-sdk'}
+  end
+end
+
+action :clean do
+  ruby_block 'desc' do
+    block do
+      Dir["#{node['metric_maker']['root']}/conf/*.json"].each{|f| File.unlink(f)}
+      Dir["#{node['metric_maker']['root']}/collectors/*"].each{|f| File.unlink(f)}
+    end
   end
 end

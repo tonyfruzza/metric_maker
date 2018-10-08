@@ -26,3 +26,25 @@ action :create do
     only_if {node['platform'] == 'windows'}
   end
 end
+
+action :create_percentage_used do
+  metric_maker new_resource.name do
+    namespace new_resource.cw_namespace
+    script 'percent_used_mem.sh'
+    script_cookbook 'metric_maker'
+    unit 'Percent'
+    dimensions new_resource.dimensions
+    publish_with_no_dimension new_resource.publish_with_no_dimension
+    not_if {node['platform'] == 'windows'}
+  end
+
+  metric_maker new_resource.name do
+    namespace new_resource.cw_namespace
+    script 'percent_used_mem.ps1'
+    script_cookbook 'metric_maker'
+    unit 'Percent'
+    dimensions new_resource.dimensions
+    publish_with_no_dimension new_resource.publish_with_no_dimension
+    only_if {node['platform'] == 'windows'}
+  end
+end
