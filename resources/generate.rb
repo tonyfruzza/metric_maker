@@ -123,8 +123,8 @@ end
 action :clean do
   ruby_block 'desc' do
     block do
-      Dir["#{node['metric_maker']['root']}/conf/*.json"].each{|f| File.unlink(f)}
-      Dir["#{node['metric_maker']['root']}/collectors/*"].each{|f| File.unlink(f)}
+      Dir["#{node['metric_maker']['root']}/conf/*.json"].each{|f| ::File.unlink(f)}
+      Dir["#{node['metric_maker']['root']}/collectors/*"].each{|f| ::File.unlink(f)}
     end
   end
 end
