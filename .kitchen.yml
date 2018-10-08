@@ -19,6 +19,11 @@ platforms:
       image_id: ami-6cd6f714
     transport:
       username: ec2-user
+  - name: ubuntu-18.04LTS
+    driver:
+      image_id: ami-0bbe6b35405ecebdb
+    transport:
+      username: ubuntu
   - name: windows-2012
 
 suites:
