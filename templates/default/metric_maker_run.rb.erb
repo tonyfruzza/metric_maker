@@ -48,7 +48,7 @@ class MetricMaker
       namespace: metric['namespace'],
       metric_data: [
         metric_name: metric['name'],
-        timestamp: Time.now,
+        timestamp: Time.now.utc,
         value: value.strip.to_f,
         unit: metric['unit']
       ]
