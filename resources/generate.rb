@@ -75,6 +75,7 @@ end
 action :install do
   package 'ruby' do
     not_if {node['platform'] == 'windows'}
+    retries node['metric_maker']['ruby_pkg_install_retries']
   end
 
   # Create directories for holding related files
@@ -97,7 +98,7 @@ action :install do
     not_if {node['platform'] == 'windows'}
   end
 
-  if respond_to? :windows_task
+  if node['platform'] == 'windows'
     windows_task 'metric_maker_run_task' do
       command "C:\\opscode\\chef\\embedded\\bin\\ruby #{path2win(node['metric_maker']['root'])}\\bin\\metric_maker_run.rb"
       run_level :highest
@@ -107,14 +108,14 @@ action :install do
     end
   end
 
-  gem_package 'aws-sdk' do
+  gem_package 'aws-sdk-cloudwatch' do
     options '--no-ri --no-rdoc'
     not_if {node['platform'] == 'windows'}
   end
 
   execute 'install_aws_sdk' do
     cwd '/opscode/chef/embedded/bin/'
-    command '.\\gem install aws-sdk --no-ri --no-rdoc'
+    command '.\\gem install aws-sdk-cloudwatch --no-ri --no-rdoc'
     only_if {node['platform'] == 'windows'}
     not_if {Gem::Specification.map{|g| g.name}.include? 'aws-sdk'}
   end
