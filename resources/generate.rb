@@ -96,6 +96,7 @@ action :install do
     command "#{node['metric_maker']['root']}/bin/metric_maker_run.rb"
     environment ({PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'})
     not_if {node['platform'] == 'windows'}
+    action node['metric_maker']['cron']['enabled'] ? [:create] : [:delete]
   end
 
   if node['platform'] == 'windows'
