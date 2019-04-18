@@ -93,7 +93,7 @@ action :install do
 
   cron 'metric_maker_run_cron' do
     minute "*/#{node['metric_maker']['interval']}"
-    command "#{node['metric_maker']['root']}/bin/metric_maker_run.rb"
+    command "#{node['metric_maker']['root']}/bin/metric_maker_run.rb #{'> /dev/null 2>&1' unless node['metric_maker']['keep_output']}"
     environment ({PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'})
     not_if {node['platform'] == 'windows'}
     action node['metric_maker']['cron']['enabled'] ? [:create] : [:delete]
