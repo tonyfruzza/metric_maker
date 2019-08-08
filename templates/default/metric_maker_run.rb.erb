@@ -7,6 +7,7 @@ require 'thread'
 
 ROOT_PATH='<%= node['metric_maker']['root'] %>'
 REGION_OVERRIDE='<%= node['metric_maker']['region_override'] %>'
+MAX_METRIC_PER_API_CALL=20
 
 class MetricMaker
   def initialize
@@ -26,11 +27,22 @@ class MetricMaker
     #  unit string
     #  publish_with_no_dimension bool
     #
+    @metrics_to_publish = {}
     threads = []
-
     Dir["#{ROOT_PATH}/conf/*.json"].each do |config|
       threads << Thread.new{handle_metric_thread(config)}
       threads.each{|t| t.join}
+    end
+
+    @metrics_to_publish.each do |namespace, metrics|
+      metrics.each_slice(MAX_METRIC_PER_API_CALL) do |slice|
+        params = {
+          namespace: namespace,
+          metric_data: slice
+        }
+        puts JSON.pretty_generate(params)
+        # @cwm.put_metric_data(params)
+      end
     end
   end
 
@@ -61,8 +73,8 @@ class MetricMaker
       params[:metric_data].last[:dimensions] = metric['dimensions'].map{|element| {name: element.first.first, value: element.first.last} }
     end
 
-    puts JSON.pretty_generate(params)
-    @cwm.put_metric_data(params)
+    @metrics_to_publish[metric['namespace']] ||= []
+    @metrics_to_publish[metric['namespace']] << params[:metric_data]
   end
 
 end
