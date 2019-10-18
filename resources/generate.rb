@@ -88,6 +88,7 @@ action :install do
 
   template "#{node['metric_maker']['root']}/bin/metric_maker_run.rb" do
     source 'metric_maker_run.rb.erb'
+    cookbook 'metric_maker'
     mode 0755
   end
 
