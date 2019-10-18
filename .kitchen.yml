@@ -3,7 +3,7 @@ driver:
   name: ec2
   instance_type: t2.large
   region: us-west-2
-  iam_profile_name: S3WorkerRoleforEC2
+  iam_profile_name: testkitchen-metric_maker
   tags:
     Name: test-kitchen-<%= ENV['USER'] %>
     Owner: <%= ENV['USER'] %>
@@ -25,6 +25,7 @@ platforms:
     transport:
       username: ubuntu
   - name: windows-2012
+  - name: windows-2016
 
 suites:
   - name: metrics_maker
