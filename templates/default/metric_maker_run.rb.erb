@@ -41,7 +41,7 @@ class MetricMaker
           metric_data: slice
         }
         puts JSON.pretty_generate(params)
-        # @cwm.put_metric_data(params)
+        @cwm.put_metric_data(params)
       end
     end
   end
@@ -74,7 +74,7 @@ class MetricMaker
     end
 
     @metrics_to_publish[metric['namespace']] ||= []
-    @metrics_to_publish[metric['namespace']] << params[:metric_data]
+    @metrics_to_publish[metric['namespace']] += params[:metric_data]
   end
 
 end
