@@ -8,7 +8,7 @@ version '0.7.2'
 source_url 'https://github.com/tonyfruzza/metric_maker'
 issues_url 'https://github.com/tonyfruzza/metric_maker/issues'
 chef_version '>= 12.9' if respond_to?(:chef_version)
-%w(amazon windows).each do |os|
+%w(amazon windows ubuntu).each do |os|
   supports os
 end
 requires 'aws', '~> 8'
