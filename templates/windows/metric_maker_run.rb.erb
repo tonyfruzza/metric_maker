@@ -11,7 +11,11 @@ REGION_OVERRIDE='<%= node['metric_maker']['region_override'] %>'
 
 class MetricMaker
   def initialize
-    @cwm = Aws::CloudWatch::Client.new(region: get_region)
+    @cwm = Aws::CloudWatch::Client.new(
+      region: get_region,
+      retry_limit: <%= node['metric_maker']['retries'] %>,
+      retry_backoff: lambda{|c| sleep(<%= node['metric_maker']['sleep_seconds_between_retries'] %>)}
+    )
   end
 
   def get_region
