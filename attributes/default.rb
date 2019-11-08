@@ -4,3 +4,5 @@ default['metric_maker']['interval'] = 1
 default['metric_maker']['ruby_pkg_install_retries'] = 3
 default['metric_maker']['keep_output'] = false
 default['metric_maker']['cron']['enabled'] = true
+default['metric_maker']['retries'] = 20
+default['metric_maker']['sleep_seconds_between_retries'] = 5
