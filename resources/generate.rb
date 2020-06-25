@@ -1,4 +1,5 @@
 resource_name :metric_maker
+provides :metric_maker
 property :metric_name, String, name_property: true
 property :namespace, String, required: true
 property :dimensions, Array, default: [], required: false
