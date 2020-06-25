@@ -1,4 +1,5 @@
 resource_name :metric_maker_cpu
+provides :metric_maker_cpu
 property :metric_name, String, name_property: true
 property :namespace, String, default: 'MetricMaker'
 property :dimensions, Array, default: [], required: false

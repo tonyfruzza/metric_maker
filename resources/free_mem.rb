@@ -1,4 +1,5 @@
 resource_name :metric_maker_free_mem
+provides :metric_maker_free_mem
 property :metric_name, String, name_property: true
 property :cw_namespace, String, default: 'MetricMaker'
 property :dimensions, Array, default: [], required: false
